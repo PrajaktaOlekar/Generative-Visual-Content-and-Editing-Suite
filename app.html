@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EasyGen Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:       #ff4d4d;
+      --red-dark:  #b02030;
+      --red-glow:  rgba(255,77,77,0.18);
+      --red-dim:   rgba(176,32,48,0.25);
+      --surface:   #100a0d;
+      --surface2:  #160d10;
+      --surface3:  #1d1014;
+      --border:    rgba(255,255,255,0.06);
+      --border-r:  rgba(176,32,48,0.35);
+      --text:      #f0eded;
+      --text-muted:#a89898;
+      --text-dim:  #6b5555;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", sans-serif;
+      background: #050307;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, #2a0d18 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, #150810 0%, transparent 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+    }
+
+    /* ── Header ── */
+    .app-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red-dim);
+      border: 1px solid var(--border-r);
+      border-radius: 999px;
+      padding: 4px 14px 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #ff9090;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .logo-badge::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 0%, #ffb3b3 50%, #ff4d4d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      width: 100%;
+      max-width: 1120px;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .sidebar-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0 4px;
+      margin-bottom: 4px;
+    }
+
+    .nav-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--red-glow), transparent);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-card:hover { border-color: var(--border-r); transform: translateX(2px); }
+    .nav-card:hover::before { opacity: 1; }
+    .nav-card.active { border-color: var(--red-dark); background: var(--surface3); }
+    .nav-card.active::before { opacity: 1; }
+
+    .nav-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--red-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .nav-card.active .nav-icon {
+      background: linear-gradient(135deg, var(--red-dark), var(--red));
+    }
+
+    .nav-text { flex: 1; }
+    .nav-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .nav-card.active .nav-title { color: #fff; }
+    .nav-sub {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .nav-arrow {
+      font-size: 10px;
+      color: var(--text-dim);
+      transition: transform 0.2s;
+    }
+    .nav-card:hover .nav-arrow, .nav-card.active .nav-arrow {
+      color: var(--red);
+      transform: translateX(2px);
+    }
+
+    /* ── Tool panel ── */
+    .tool-section {
+      display: none;
+      width: 100%;
+      background: var(--surface2);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 24px 48px rgba(0,0,0,0.6);
+    }
+
+    .tool-section.active { display: block; }
+
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--surface3), var(--surface2));
+    }
+
+    .tool-header-left { display: flex; align-items: center; gap: 10px; }
+
+    .tool-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--red-dark), var(--red));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+
+    .tool-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .back-btn {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-r);
+      background: transparent;
+      color: #ff9090;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .back-btn:hover { background: var(--red-dim); color: #fff; }
+
+    .tool-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .tool-left {
+      padding: 20px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tool-right {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── Form elements ── */
+    .field-group { margin-bottom: 14px; }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.73rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .field-label .hint {
+      font-size: 0.68rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--text-dim);
+    }
+
+    textarea, input[type="text"], input[type="number"], select {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 10px 12px;
+      transition: border-color 0.15s;
+      outline: none;
+      resize: vertical;
+    }
+
+    textarea { min-height: 100px; line-height: 1.5; }
+    textarea.neg { min-height: 56px; }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--border-r);
+      box-shadow: 0 0 0 3px rgba(176,32,48,0.12);
+    }
+
+    textarea::placeholder { color: var(--text-dim); }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b5555' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    /* File input */
+    .file-upload {
+      position: relative;
+      width: 100%;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2;
+    }
+
+    .file-upload-face {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .file-upload:hover .file-upload-face { border-color: var(--border-r); color: var(--text); }
+
+    .file-upload-face .upload-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--red-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .file-name-display {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+      padding-left: 2px;
+    }
+
+    /* Upload preview */
+    .upload-preview {
+      width: 100%;
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .upload-preview img {
+      max-width: 100%;
+      max-height: 130px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Sliders */
+    .slider-group { margin-bottom: 14px; }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .slider-header .slider-label {
+      font-size: 0.73rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .slider-header .hint { font-size: 0.67rem; color: var(--text-dim); font-weight:400; text-transform:none; letter-spacing:0; }
+
+    .slider-val-badge {
+      background: var(--red-dim);
+      border: 1px solid var(--border-r);
+      border-radius: 6px;
+      padding: 1px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ff9090;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      accent-color: var(--red);
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    /* Run button */
+    .run-btn {
+      width: 100%;
+      padding: 11px 0;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--red-dark) 0%, var(--red) 100%);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: all 0.18s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .run-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1));
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+
+    .run-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(176,32,48,0.5); }
+    .run-btn:hover::before { opacity: 1; }
+    .run-btn:active { transform: translateY(0); }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 10px;
+      min-height: 20px;
+      font-size: 0.75rem;
+      color: #ffb347;
+      font-weight: 500;
+    }
+
+    .status-bar .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      display: none;
+      box-shadow: 0 0 6px var(--red);
+      animation: pulse 1s infinite;
+    }
+
+    .status-bar.active .dot { display: inline-block; }
+
+    /* Preview box */
+    .preview-box {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,0.08);
+      background: var(--surface);
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(176,32,48,0.06), transparent 60%);
+      pointer-events: none;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 10px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview-box video {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .preview-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-placeholder .ph-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+
+    .preview-placeholder p { font-size: 0.8rem; color: var(--text-dim); }
+
+    /* Download button */
+    .download-btn {
+      width: 100%;
+      padding: 9px;
+      border-radius: 10px;
+      border: 1px solid var(--border-r);
+      background: var(--red-dim);
+      color: #ff9090;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    .download-btn:hover { background: var(--red-dark); color: #fff; }
+
+    /* Params card */
+    .params-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      line-height: 2;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    /* Section label inside tool */
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff9090;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-r);
+      opacity: 0.4;
+    }
+
+    /* Brush control box */
+    .brush-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    /* Brush tool buttons */
+    .brush-tools {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .brush-tool-btn {
+      flex: 1;
+      padding: 7px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .brush-tool-btn.active, .brush-tool-btn:hover {
+      background: var(--red-dim);
+      border-color: var(--border-r);
+      color: #ff9090;
+    }
+
+    /* Canvas wrap */
+    #inpaintCanvasWrap {
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,0.1);
+      background: var(--surface);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: crosshair;
+      position: relative;
+    }
+
+    /* Number inputs row */
+    .inputs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Mobile */
+    @media (max-width: 820px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
+      .sidebar-label { width: 100%; }
+      .nav-card { min-width: 140px; flex: 1; }
+      .tool-body { grid-template-columns: 1fr; }
+      .tool-left { border-right: none; border-bottom: 1px solid var(--border); }
+      h1 { font-size: 2rem; }
+    }
+
+    /* Preset buttons */
+    .preset-btn {
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .preset-btn:hover {
+      background: var(--red-dim);
+      border-color: var(--border-r);
+      color: #ff9090;
+    }
+    .preset-btn.active-preset {
+      background: var(--red-dim);
+      border-color: var(--red-dark);
+      color: #ff9090;
+    }
+    /* Mode tabs active state */
+    .mode-tab.active {
+      color: #ff9090 !important;
+      border-bottom: 2px solid var(--red) !important;
+      background: var(--red-dim) !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 99px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo-badge"> Generative Studio</div>
+    <h1>EasyGen </h1>
+    <p class="subtitle">Transform your imagination into stunning visuals </p>
+  </header>
+
+  <div class="main-layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-label">Tools</div>
+
+      <div class="nav-card active" id="nav-t2i" onclick="openTool('t2i')">
+        <div class="nav-icon">&#x1F5BC;</div>
+        <div class="nav-text">
+          <div class="nav-title">Text to Image</div>
+          <div class="nav-sub">Prompt &rarr; image</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+
+      <div class="nav-card" id="nav-t2v" onclick="openTool('t2v')">
+        <div class="nav-icon">&#x1F3AC;</div>
+        <div class="nav-text">
+          <div class="nav-title">Text to Video</div>
+          <div class="nav-sub">Prompt &rarr; video</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+
+      <div class="nav-card" id="nav-img2img" onclick="openTool('img2img')">
+        <div class="nav-icon">&#x1F504;</div>
+        <div class="nav-text">
+          <div class="nav-title">Style Transfer</div>
+          <div class="nav-sub">Restyle any image</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+
+      <div class="nav-card" id="nav-i2v" onclick="openTool('i2v')">
+        <div class="nav-icon">&#x1F3A5;</div>
+        <div class="nav-text">
+          <div class="nav-title">Image to Video</div>
+          <div class="nav-sub">Add motion</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+
+      <div class="nav-card" id="nav-gemini" onclick="openTool('gemini')">
+        <div class="nav-icon">&#x26A1;</div>
+        <div class="nav-text">
+          <div class="nav-title">Image Transformer</div>
+          <div class="nav-sub">Advanced img2img</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+
+      <div class="nav-card" id="nav-inpaint" onclick="openTool('inpaint')">
+        <div class="nav-icon">&#x1F58C;</div>
+        <div class="nav-text">
+          <div class="nav-title">Inpainting</div>
+          <div class="nav-sub">Fill &amp; replace regions</div>
+        </div>
+        <span class="nav-arrow">&#x276F;</span>
+      </div>
+    </nav>
+
+    <!-- Tool Panels -->
+    <main>
+
+      <!-- Text to Image -->
+      <section id="t2i" class="tool-section active">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x1F5BC;</div>
+            <h2>Text to Image</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+        <div class="tool-body">
+          <div class="tool-left">
+            <div class="field-group">
+              <div class="field-label">Prompt</div>
+              <textarea id="t2iPrompt" placeholder="A majestic lion in a cyberpunk city, neon lights, 4K, highly detailed, cinematic lighting"></textarea>
+            </div>
+            <button id="t2iButton" class="run-btn" onclick="generateT2I()">&#x2728; Generate Image</button>
+            <div class="status-bar" id="t2iStatus"><span class="dot"></span><span id="t2iStatusText"></span></div>
+          </div>
+          <div class="tool-right">
+            <div class="preview-box">
+              <img id="t2iOutput" alt="Generated image" style="display:none;" />
+              <div id="t2iPlaceholder" class="preview-placeholder">
+                <div class="ph-icon">&#x1F5BC;</div>
+                <p>Your generated image will appear here</p>
+              </div>
+            </div>
+            <button class="download-btn" id="t2iDlBtn" style="display:none" onclick="downloadImage('t2iOutput','generated.png')">&#x2B07; Download Image</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Text to Video -->
+      <section id="t2v" class="tool-section">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x1F3AC;</div>
+            <h2>Text to Video</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+        <div class="tool-body">
+          <div class="tool-left">
+            <div class="field-group">
+              <div class="field-label">Prompt</div>
+              <textarea id="t2vPrompt" placeholder="Singer on a neon stage, camera slowly circling, cinematic music video style"></textarea>
+            </div>
+            <div class="inputs-row">
+              <div class="field-group">
+                <div class="field-label">Frames <span class="hint">(8–32)</span></div>
+                <input id="t2vFrames" type="number" min="8" max="32" value="16" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">FPS <span class="hint">(4–12)</span></div>
+                <input id="t2vFps" type="number" min="4" max="12" value="8" />
+              </div>
+            </div>
+            <button id="t2vButton" class="run-btn" onclick="generateT2V()">&#x25B6; Generate Video</button>
+            <div class="status-bar" id="t2vStatus"><span class="dot"></span><span id="t2vStatusText"></span></div>
+          </div>
+          <div class="tool-right">
+            <div class="preview-box">
+              <video id="t2vOutput" controls style="display:none; max-width:100%; border-radius:10px;"></video>
+              <div id="t2vPlaceholder" class="preview-placeholder">
+                <div class="ph-icon">&#x1F3AC;</div>
+                <p>Generated video will appear here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Style Transfer (img2img basic) -->
+      <section id="img2img" class="tool-section">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x1F504;</div>
+            <h2>Style Transfer</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+        <div class="tool-body">
+          <div class="tool-left">
+            <div class="field-group">
+              <div class="field-label">Style Prompt</div>
+              <textarea id="img2imgPrompt" placeholder="Make this image look like a neon cyberpunk artwork, highly detailed"></textarea>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Input Image</div>
+              <div class="file-upload">
+                <input id="img2imgFile" type="file" accept="image/*" />
+                <div class="file-upload-face">
+                  <div class="upload-icon">&#x1F4C2;</div>
+                  <span>Click to upload image</span>
+                </div>
+              </div>
+            </div>
+            <button id="img2imgButton" class="run-btn" onclick="generateImg2Img()">&#x1F504; Transform Style</button>
+          </div>
+          <div class="tool-right">
+            <div class="preview-box">
+              <img id="img2imgOutput" alt="Img2Img output" style="display:none;" />
+              <div id="img2imgPlaceholder" class="preview-placeholder">
+                <div class="ph-icon">&#x1F504;</div>
+                <p>Transformed image will appear here</p>
+              </div>
+            </div>
+            <button class="download-btn" id="img2imgDlBtn" style="display:none" onclick="downloadImage('img2imgOutput','styled.png')">&#x2B07; Download</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Image to Video -->
+      <section id="i2v" class="tool-section">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x1F3A5;</div>
+            <h2>Image to Video</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+        <div class="tool-body">
+          <div class="tool-left">
+            <div class="field-group">
+              <div class="field-label">Motion Prompt</div>
+              <textarea id="i2vPrompt" placeholder="Camera slowly circling around the subject, soft cinematic lighting"></textarea>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Quality</div>
+              <select id="i2vQuality">
+                <option value="fast">Fast</option>
+                <option value="good" selected>Good</option>
+                <option value="best">Best</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Input Image</div>
+              <div class="file-upload">
+                <input id="i2vFile" type="file" accept="image/*" />
+                <div class="file-upload-face">
+                  <div class="upload-icon">&#x1F4C2;</div>
+                  <span>Click to upload image</span>
+                </div>
+              </div>
+            </div>
+            <button id="i2vButton" class="run-btn" onclick="generateI2V()">&#x25B6; Generate Video</button>
+          </div>
+          <div class="tool-right">
+            <div class="preview-box" style="min-height:220px; flex-direction:column; gap:12px;">
+              <div id="i2vPlaceholder" class="preview-placeholder">
+                <div class="ph-icon">&#x1F3A5;</div>
+                <p>Video download link will appear here</p>
+              </div>
+              <a id="i2vDownload" href="#" download style="display:none;">
+                <button class="download-btn" style="margin:0;">&#x2B07; Download Video</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced Image Transformer -->
+      <section id="gemini" class="tool-section">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x26A1;</div>
+            <h2>Image Transformer — Advanced</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+        <div class="tool-body">
+          <div class="tool-left">
+            <div class="section-label">Prompts</div>
+            <div class="field-group">
+              <div class="field-label">Positive Prompt</div>
+              <textarea id="geminiPrompt" placeholder="cyberpunk neon style, ultra detailed, 8k, cinematic lighting, sharp focus, masterpiece"></textarea>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Negative Prompt</div>
+              <textarea class="neg" id="geminiNegPrompt" placeholder="blurry, low quality, distorted, deformed, watermark, text, bad anatomy"></textarea>
+            </div>
+
+            <div class="section-label">Input Image</div>
+            <div class="field-group">
+              <div class="file-upload">
+                <input id="geminiFile" type="file" accept="image/*" onchange="previewInput(this,'geminiPreviewImg')" />
+                <div class="file-upload-face">
+                  <div class="upload-icon">&#x1F4C2;</div>
+                  <span id="geminiFileLabel">Click to upload image</span>
+                </div>
+              </div>
+              <div class="upload-preview" id="geminiPreviewWrap" style="display:none;">
+                <img id="geminiPreviewImg" style="display:none;" />
+              </div>
+            </div>
+
+            <div class="section-label">Parameters</div>
+            <div class="field-group">
+              <div class="field-label">Scheduler</div>
+              <select id="geminiScheduler">
+                <option value="UniPC" selected>UniPC — best for SD 2.1</option>
+                <option value="DPMSolverMultistep">DPM++ 2M — fast + quality</option>
+                <option value="DDIM">DDIM — balanced</option>
+                <option value="EulerAncestral">Euler Ancestral — creative</option>
+                <option value="PNDM">PNDM — stable</option>
+              </select>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">Denoising Strength <span class="hint">— lower = closer to original</span></span>
+                <span class="slider-val-badge" id="geminiStrengthVal">0.60</span>
+              </div>
+              <input type="range" id="geminiStrength" min="0.1" max="1.0" step="0.05" value="0.6"
+                oninput="document.getElementById('geminiStrengthVal').textContent=parseFloat(this.value).toFixed(2)" />
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">CFG Scale <span class="hint">— prompt adherence</span></span>
+                <span class="slider-val-badge" id="geminiCFGVal">7.5</span>
+              </div>
+              <input type="range" id="geminiCFG" min="1" max="20" step="0.5" value="7.5"
+                oninput="document.getElementById('geminiCFGVal').textContent=parseFloat(this.value).toFixed(1)" />
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">Inference Steps <span class="hint">— quality vs speed</span></span>
+                <span class="slider-val-badge" id="geminiStepsVal">40</span>
+              </div>
+              <input type="range" id="geminiSteps" min="10" max="80" step="5" value="40"
+                oninput="document.getElementById('geminiStepsVal').textContent=this.value" />
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Output Size <span class="hint">— SD 2.1 native: 768&times;768</span></div>
+              <select id="geminiSize">
+                <option value="512x512">512 &times; 512 — fast</option>
+                <option value="768x512">768 &times; 512 — landscape</option>
+                <option value="512x768">512 &times; 768 — portrait</option>
+                <option value="768x768" selected>768 &times; 768 — native quality &#x2B50;</option>
+              </select>
+            </div>
+
+            <button id="geminiButton" class="run-btn" onclick="generateGeminiImg2Img()">&#x1F3A8; Transform Image</button>
+            <div class="status-bar" id="geminiStatus"><span class="dot"></span><span id="geminiStatusText"></span></div>
+          </div>
+
+          <div class="tool-right">
+            <div class="preview-box" style="min-height:320px;">
+              <img id="geminiOutput" alt="Transformed image" style="display:none;" />
+              <div id="geminiPlaceholder" class="preview-placeholder">
+                <div class="ph-icon">&#x26A1;</div>
+                <p>Transformed image will appear here</p>
+              </div>
+            </div>
+            <button class="download-btn" id="geminiDownloadBtn" style="display:none"
+              onclick="downloadImage('geminiOutput','transformed.png')">&#x2B07; Download Image</button>
+            <div id="geminiParamsCard" class="params-card" style="display:none;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inpainting -->
+      <section id="inpaint" class="tool-section">
+        <div class="tool-header">
+          <div class="tool-header-left">
+            <div class="tool-icon">&#x1F58C;</div>
+            <h2>Image Inpainting</h2>
+          </div>
+          <button class="back-btn" onclick="closeTools()">&#x2190; All tools</button>
+        </div>
+
+        <!-- Mode tabs -->
+        <div style="display:flex; gap:0; border-bottom:1px solid var(--border); background:var(--surface3);">
+          <button class="mode-tab active" id="tab-remove"    onclick="setInpaintMode('remove')"
+            style="flex:1;padding:11px 6px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:0.8rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;letter-spacing:0.02em;">
+            &#x1F5D1; Object Removal
+          </button>
+          <button class="mode-tab" id="tab-bg"       onclick="setInpaintMode('bg')"
+            style="flex:1;padding:11px 6px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:0.8rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;letter-spacing:0.02em;">
+            &#x1F304; Background Replace
+          </button>
+          <button class="mode-tab" id="tab-custom"   onclick="setInpaintMode('custom')"
+            style="flex:1;padding:11px 6px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:0.8rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;letter-spacing:0.02em;">
+            &#x270F; Custom Fill
+          </button>
+        </div>
+
+        <!-- Mode hint bar -->
+        <div id="modeHint" style="padding:10px 20px; background:var(--red-dim); border-bottom:1px solid var(--border-r);
+          font-size:0.78rem; color:#ffb3b3; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:15px;">&#x1F4A1;</span>
+          <span id="modeHintText">Paint over the object/person you want removed. LaMa will fill it with natural background.</span>
+        </div>
+
+        <div class="tool-body">
+          <div class="tool-left">
+
+            <!-- Object Removal mode -->
+            <div id="mode-remove">
+              <div class="section-label">Object Removal</div>
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;">
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;font-weight:500;">Quick remove presets</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <button class="preset-btn" onclick="applyPreset('person')">&#x1F464; Person</button>
+                  <button class="preset-btn" onclick="applyPreset('object')">&#x1F4E6; Object</button>
+                  <button class="preset-btn" onclick="applyPreset('text')">&#x1F4DD; Text/Logo</button>
+                  <button class="preset-btn" onclick="applyPreset('watermark')">&#x274C; Watermark</button>
+                  <button class="preset-btn" onclick="applyPreset('car')">&#x1F697; Vehicle</button>
+                  <button class="preset-btn" onclick="applyPreset('wire')">&#x26A1; Wire/Cable</button>
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Custom description <span class="hint">— optional</span></div>
+                <textarea id="inpaintPrompt" style="min-height:70px;"
+                  placeholder="seamless background fill, natural texture, photorealistic"></textarea>
+              </div>
+            </div>
+
+            <!-- Background Replace mode -->
+            <div id="mode-bg" style="display:none;">
+              <div class="section-label">Background Replacement</div>
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;">
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;font-weight:500;">Background presets</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <button class="preset-btn" onclick="applyPreset('beach')">&#x1F3D6; Beach</button>
+                  <button class="preset-btn" onclick="applyPreset('forest')">&#x1F333; Forest</button>
+                  <button class="preset-btn" onclick="applyPreset('city')">&#x1F307; City Night</button>
+                  <button class="preset-btn" onclick="applyPreset('studio')">&#x1F4F8; Studio</button>
+                  <button class="preset-btn" onclick="applyPreset('mountains')">&#x26F0; Mountains</button>
+                  <button class="preset-btn" onclick="applyPreset('space')">&#x1F30C; Space</button>
+                  <button class="preset-btn" onclick="applyPreset('office')">&#x1F4BC; Office</button>
+                  <button class="preset-btn" onclick="applyPreset('sunset')">&#x1F305; Sunset</button>
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Describe background</div>
+                <textarea id="inpaintPromptBg" style="min-height:70px;"
+                  placeholder="beautiful sunset beach, golden hour, ocean waves, photorealistic, 8k"></textarea>
+              </div>
+            </div>
+
+            <!-- Custom Fill mode -->
+            <div id="mode-custom" style="display:none;">
+              <div class="section-label">Custom Fill</div>
+              <div class="field-group">
+                <div class="field-label">Fill with</div>
+                <textarea id="inpaintPromptCustom" style="min-height:90px;"
+                  placeholder="a beautiful garden with flowers, realistic, high quality, 8k"></textarea>
+              </div>
+            </div>
+
+            <!-- Negative prompt — shared -->
+            <div class="field-group">
+              <div class="field-label">Negative Prompt</div>
+              <textarea class="neg" id="inpaintNegPrompt"
+                placeholder="blurry, low quality, distorted, watermark, artifacts"></textarea>
+            </div>
+
+            <div class="section-label">Upload &amp; Paint</div>
+            <div class="field-group">
+              <div class="file-upload">
+                <input id="inpaintFile" type="file" accept="image/*" onchange="inpaintLoadImage(this)" />
+                <div class="file-upload-face">
+                  <div class="upload-icon">&#x1F4C2;</div>
+                  <span>Click to upload image</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="brush-box">
+              <div class="section-label" style="margin-bottom:10px;">Brush</div>
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-label">Size</span>
+                  <span class="slider-val-badge" id="brushSizeVal">30px</span>
+                </div>
+                <input type="range" id="brushSize" min="5" max="120" value="30"
+                  oninput="document.getElementById('brushSizeVal').textContent=this.value+'px'; updateBrush()" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-label">Opacity</span>
+                  <span class="slider-val-badge" id="brushOpacityVal">85%</span>
+                </div>
+                <input type="range" id="brushOpacity" min="0.3" max="1.0" step="0.05" value="0.85"
+                  oninput="document.getElementById('brushOpacityVal').textContent=Math.round(this.value*100)+'%'" />
+              </div>
+              <div class="brush-tools">
+                <button class="brush-tool-btn active" id="btnPaint" onclick="setInpaintTool('paint')">&#x270F; Paint</button>
+                <button class="brush-tool-btn" id="btnErase" onclick="setInpaintTool('erase')">&#x1F9F9; Erase</button>
+                <button class="brush-tool-btn" onclick="clearInpaintMask()">&#x1F5D1; Clear</button>
+              </div>
+            </div>
+
+            <div class="section-label">Parameters</div>
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">CFG Scale</span>
+                <span class="slider-val-badge" id="inpaintCFGVal">7.5</span>
+              </div>
+              <input type="range" id="inpaintCFG" min="1" max="20" step="0.5" value="7.5"
+                oninput="document.getElementById('inpaintCFGVal').textContent=parseFloat(this.value).toFixed(1)" />
+            </div>
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">Steps</span>
+                <span class="slider-val-badge" id="inpaintStepsVal">40</span>
+              </div>
+              <input type="range" id="inpaintSteps" min="10" max="80" step="5" value="40"
+                oninput="document.getElementById('inpaintStepsVal').textContent=this.value" />
+            </div>
+            <div class="slider-group">
+              <div class="slider-header">
+                <span class="slider-label">Mask Blur <span class="hint">— edge feathering</span></span>
+                <span class="slider-val-badge" id="inpaintBlurVal">4</span>
+              </div>
+              <input type="range" id="inpaintBlur" min="0" max="20" step="1" value="4"
+                oninput="document.getElementById('inpaintBlurVal').textContent=this.value" />
+            </div>
+
+            <button id="inpaintButton" class="run-btn" onclick="runInpainting()">&#x1F5D1; Remove / Replace</button>
+            <div class="status-bar" id="inpaintStatus"><span class="dot"></span><span id="inpaintStatusText"></span></div>
+          </div>
+
+          <div class="tool-right">
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;">
+              Paint area to process
+            </div>
+            <div id="inpaintCanvasWrap">
+              <canvas id="inpaintBg" style="display:block; border-radius:12px;"></canvas>
+              <canvas id="inpaintMask" style="position:absolute;top:0;left:0;border-radius:12px;opacity:0.55;"></canvas>
+              <div id="inpaintCanvasPlaceholder" class="preview-placeholder" style="position:absolute;">
+                <div class="ph-icon">&#x1F58C;</div>
+                <p>Upload an image to start painting</p>
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <div style="font-size:0.73rem;color:var(--text-muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;">Output</div>
+              <div class="preview-box" style="min-height:180px;">
+                <img id="inpaintOutput" alt="Inpainted result" style="display:none;" />
+                <div id="inpaintOutputPlaceholder" class="preview-placeholder">
+                  <div class="ph-icon">&#x2728;</div>
+                  <p>Result will appear here</p>
+                </div>
+              </div>
+              <button class="download-btn" id="inpaintDownloadBtn" style="display:none;margin-top:10px;"
+                onclick="downloadImage('inpaintOutput','inpainted.png')">&#x2B07; Download Result</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+<script>
+  /* ──────────── BASE URLS ──────────── */
+  const BASE_URL_IMG     = "";
+  const BASE_URL_T2V     = "";
+  const BASE_URL_IMG2IMG = "";
+  const BASE_URL_I2V     = "";
+
+  // ⬇  UPDATE THIS to your Colab ngrok URL after running the backend notebook
+  const BASE_URL_GEMINI  = "";
+
+  // ⬇  UPDATE THIS to your Inpainting Colab ngrok URL
+  const BASE_URL_INPAINT = "";
+
+  /* ──────────── HELPERS ──────────── */
+  function setStatus(id, msg, active = true) {
+    const bar = document.getElementById(id);
+    const txt = document.getElementById(id + "Text");
+    if (!bar || !txt) return;
+    txt.textContent = msg;
+    bar.classList.toggle("active", active && !!msg);
+  }
+
+  function previewInput(input, imgId) {
+    const file = input.files[0];
+    const img = document.getElementById(imgId);
+    const lbl = document.getElementById(imgId.replace("Img","Label"));
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    img.src = url;
+    img.style.display = "";
+    if (lbl) lbl.style.display = "none";
+    const wrap = document.getElementById(imgId.replace("PreviewImg","PreviewWrap"));
+    if (wrap) wrap.style.display = "";
+  }
+
+  function downloadImage(imgId, filename) {
+    const img = document.getElementById(imgId);
+    if (!img || !img.src) return;
+    const a = document.createElement("a");
+    a.href = img.src;
+    a.download = filename;
+    a.click();
+  }
+
+  /* ──────────── TEXT TO IMAGE ──────────── */
+  async function generateT2I() {
+    const prompt = document.getElementById("t2iPrompt").value;
+    const btn = document.getElementById("t2iButton");
+    const outImg = document.getElementById("t2iOutput");
+    const placeholder = document.getElementById("t2iPlaceholder");
+    btn.disabled = true; btn.textContent = "Generating...";
+    try {
+      const res = await fetch(BASE_URL_IMG + "/api/text2img", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+      if (!res.ok) throw new Error("Server responded " + res.status);
+      const blob = await res.blob();
+      outImg.src = URL.createObjectURL(blob);
+      outImg.style.display = ""; placeholder.style.display = "none";
+      const dl = document.getElementById("t2iDlBtn"); if(dl) dl.style.display="";
+    } catch (err) {
+      alert("Failed to generate image: " + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = "✨ Generate Image";
+    }
+  }
+
+  /* ──────────── TEXT TO VIDEO ──────────── */
+  async function generateT2V() {
+    const prompt = document.getElementById("t2vPrompt").value;
+    const frames = parseInt(document.getElementById("t2vFrames").value || "16", 10);
+    const fps = parseInt(document.getElementById("t2vFps").value || "8", 10);
+    const btn = document.getElementById("t2vButton");
+    const outVideo = document.getElementById("t2vOutput");
+    const placeholder = document.getElementById("t2vPlaceholder");
+    btn.disabled = true; btn.textContent = "Generating...";
+    try {
+      const res = await fetch(BASE_URL_T2V + "/api/text2video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, num_frames: frames, fps })
+      });
+      if (!res.ok) throw new Error("Server responded " + res.status);
+      const blob = await res.blob();
+      outVideo.src = URL.createObjectURL(blob);
+      outVideo.style.display = ""; placeholder.style.display = "none";
+    } catch (err) {
+      alert("Failed to generate video: " + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = "Generate Video";
+    }
+  }
+
+  /* ──────────── IMG2IMG (basic) ──────────── */
+  async function generateImg2Img() {
+    const prompt = document.getElementById("img2imgPrompt").value;
+    const fileInput = document.getElementById("img2imgFile");
+    if (!fileInput.files.length) { alert("Upload an image first."); return; }
+    const btn = document.getElementById("img2imgButton");
+    const outImg = document.getElementById("img2imgOutput");
+    const placeholder = document.getElementById("img2imgPlaceholder");
+    btn.disabled = true; btn.textContent = "Generating...";
+    try {
+      const form = new FormData();
+      form.append("prompt", prompt);
+      form.append("image", fileInput.files[0]);
+      form.append("strength", "0.6");
+      form.append("guidance_scale", "5.0");
+      const res = await fetch(BASE_URL_IMG2IMG + "/api/img2img", { method: "POST", body: form });
+      if (!res.ok) throw new Error("Server responded " + res.status);
+      const blob = await res.blob();
+      outImg.src = URL.createObjectURL(blob);
+      outImg.style.display = ""; placeholder.style.display = "none";
+      const dl = document.getElementById("img2imgDlBtn"); if(dl) dl.style.display="";
+    } catch (e) {
+      alert("Failed to generate image: " + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = "↺ Transform Style";
+    }
+  }
+
+  /* ──────────── IMAGE TO VIDEO ──────────── */
+  async function generateI2V() {
+    const prompt = document.getElementById("i2vPrompt").value;
+    const quality = document.getElementById("i2vQuality").value;
+    const fileInput = document.getElementById("i2vFile");
+    if (!fileInput.files.length) { alert("Upload an image first."); return; }
+    const btn = document.getElementById("i2vButton");
+    const downloadLink = document.getElementById("i2vDownload");
+    const placeholder = document.getElementById("i2vPlaceholder");
+    btn.disabled = true; btn.textContent = "Generating...";
+    try {
+      const form = new FormData();
+      form.append("prompt", prompt);
+      form.append("quality", quality);
+      form.append("image", fileInput.files[0]);
+      const res = await fetch(BASE_URL_I2V + "/api/image2video", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || ("Server responded " + res.status));
+      downloadLink.href = BASE_URL_I2V + data.video_url;
+      downloadLink.style.display = "inline";
+      placeholder.style.display = "none";
+    } catch (e) {
+      alert("Failed to generate video: " + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = "Generate Video";
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     ADVANCED IMAGE TRANSFORMER — Colab Backend
+     ══════════════════════════════════════════════ */
+  async function generateGeminiImg2Img() {
+    const prompt    = document.getElementById("geminiPrompt").value.trim();
+    const negPrompt = document.getElementById("geminiNegPrompt").value.trim();
+    const fileInput = document.getElementById("geminiFile");
+    const strength  = parseFloat(document.getElementById("geminiStrength").value);
+    const cfg       = parseFloat(document.getElementById("geminiCFG").value);
+    const steps     = parseInt(document.getElementById("geminiSteps").value, 10);
+    const scheduler = document.getElementById("geminiScheduler").value;
+    const size      = document.getElementById("geminiSize").value;
+    const [width, height] = size.split("x").map(Number);
+
+    if (!fileInput.files.length) { alert("Upload an input image first."); return; }
+
+    const btn         = document.getElementById("geminiButton");
+    const outImg      = document.getElementById("geminiOutput");
+    const placeholder = document.getElementById("geminiPlaceholder");
+    const dlBtn       = document.getElementById("geminiDownloadBtn");
+    const paramsCard  = document.getElementById("geminiParamsCard");
+
+    btn.disabled = true;
+    btn.textContent = "Transforming…";
+    outImg.style.display = "none";
+    placeholder.style.display = "";
+    placeholder.textContent = "⏳ Sending to Colab backend…";
+    dlBtn.style.display = "none";
+    paramsCard.style.display = "none";
+    setStatus("geminiStatus", "Uploading image…");
+
+    try {
+      const form = new FormData();
+      form.append("image",         fileInput.files[0]);
+      form.append("prompt",        prompt);
+      form.append("neg_prompt",    negPrompt || "blurry, low quality, distorted, watermark");
+      form.append("strength",      strength.toFixed(2));
+      form.append("guidance_scale",cfg.toFixed(1));
+      form.append("num_steps",     steps);
+      form.append("scheduler",     scheduler);
+      form.append("width",         width);
+      form.append("height",        height);
+
+      setStatus("geminiStatus", `Running ${steps} diffusion steps…`);
+
+      const res = await fetch(BASE_URL_GEMINI + "/api/img2img", {
+        method: "POST",
+        body: form
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Server error ${res.status}: ${errText}`);
+      }
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+
+      outImg.src = url;
+      outImg.style.display = "";
+      placeholder.style.display = "none";
+      dlBtn.style.display = "inline-block";
+
+      // Show params used
+      paramsCard.innerHTML = `
+        <strong style="color:#ff9090">Generation params used:</strong><br>
+        🎯 Strength: <b>${strength}</b> &nbsp;|&nbsp;
+        📐 CFG: <b>${cfg}</b> &nbsp;|&nbsp;
+        🔁 Steps: <b>${steps}</b><br>
+        ⚙️ Scheduler: <b>${scheduler}</b> &nbsp;|&nbsp;
+        📏 Size: <b>${width}×${height}</b>
+      `;
+      paramsCard.style.display = "block";
+      setStatus("geminiStatus", "✅ Done!", false);
+
+    } catch (e) {
+      console.error(e);
+      placeholder.textContent = "❌ Error: " + e.message;
+      setStatus("geminiStatus", "Failed — check console", false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "🎨 Transform Image";
+    }
+  }
+
+  /* ──────────── NAV ──────────── */
+  function openTool(id) {
+    document.querySelectorAll(".tool-section").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".nav-card").forEach(n => n.classList.remove("active"));
+    const sec = document.getElementById(id);
+    if (sec) sec.classList.add("active");
+    const nav = document.getElementById("nav-" + id);
+    if (nav) nav.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function closeTools() {
+    document.querySelectorAll(".tool-section").forEach(s => s.classList.remove("active"));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => openTool("t2i"));
+
+  /* ══════════════════════════════════════════════
+     INPAINTING — Canvas brush mask painter
+     ══════════════════════════════════════════════ */
+  let inpaintTool = "paint";
+  let inpaintDrawing = false;
+  let inpaintOriginalImage = null;
+  let inpaintNaturalW = 0, inpaintNaturalH = 0;
+
+  function inpaintLoadImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      inpaintOriginalImage = img;
+      inpaintNaturalW = img.naturalWidth;
+      inpaintNaturalH = img.naturalHeight;
+
+      const wrap = document.getElementById("inpaintCanvasWrap");
+      const maxW = wrap.clientWidth || 420;
+      const scale = Math.min(1, maxW / img.naturalWidth);
+      const dispW = Math.round(img.naturalWidth * scale);
+      const dispH = Math.round(img.naturalHeight * scale);
+
+      const bgCanvas = document.getElementById("inpaintBg");
+      bgCanvas.width = dispW; bgCanvas.height = dispH;
+      bgCanvas.style.width = dispW+"px"; bgCanvas.style.height = dispH+"px";
+      const bgCtx = bgCanvas.getContext("2d");
+      bgCtx.drawImage(img, 0, 0, dispW, dispH);
+
+      const maskCanvas = document.getElementById("inpaintMask");
+      maskCanvas.width = dispW; maskCanvas.height = dispH;
+      maskCanvas.style.width = dispW+"px"; maskCanvas.style.height = dispH+"px";
+      const maskCtx = maskCanvas.getContext("2d");
+      maskCtx.clearRect(0, 0, dispW, dispH);
+
+      document.getElementById("inpaintCanvasPlaceholder").style.display = "none";
+      attachInpaintEvents(maskCanvas);
+    };
+    img.src = url;
+  }
+
+  function attachInpaintEvents(canvas) {
+    canvas.onmousedown = (e) => { inpaintDrawing = true; inpaintDraw(e, canvas); };
+    canvas.onmousemove = (e) => { if (inpaintDrawing) inpaintDraw(e, canvas); };
+    canvas.onmouseup = () => { inpaintDrawing = false; };
+    canvas.onmouseleave = () => { inpaintDrawing = false; };
+    // Touch support
+    canvas.ontouchstart = (e) => { e.preventDefault(); inpaintDrawing = true; inpaintDraw(e.touches[0], canvas); };
+    canvas.ontouchmove  = (e) => { e.preventDefault(); if (inpaintDrawing) inpaintDraw(e.touches[0], canvas); };
+    canvas.ontouchend   = () => { inpaintDrawing = false; };
+  }
+
+  function inpaintDraw(e, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const ctx = canvas.getContext("2d");
+    const size = parseInt(document.getElementById("brushSize").value);
+    const opacity = parseFloat(document.getElementById("brushOpacity").value);
+
+    ctx.save();
+    if (inpaintTool === "erase") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.globalAlpha = 1.0;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = opacity;
+    }
+    ctx.beginPath();
+    ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+    ctx.fillStyle = "#ff3300";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function setInpaintTool(tool) {
+    inpaintTool = tool;
+    document.getElementById("btnPaint").style.background = tool === "paint" ? "#b02030" : "transparent";
+    document.getElementById("btnErase").style.background = tool === "erase" ? "#b02030" : "transparent";
+  }
+
+  function clearInpaintMask() {
+    const canvas = document.getElementById("inpaintMask");
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function updateBrush() {} // slider oninput already updates live
+
+  async function runInpainting() {
+    const prompt    = getActiveInpaintPrompt() || "seamless background fill, natural texture, photorealistic";
+    const negPrompt = document.getElementById("inpaintNegPrompt").value.trim();
+    const cfg       = parseFloat(document.getElementById("inpaintCFG").value);
+    const steps     = parseInt(document.getElementById("inpaintSteps").value);
+    const blur      = parseInt(document.getElementById("inpaintBlur").value);
+
+    if (!inpaintOriginalImage) { alert("Please upload an image first."); return; }
+
+    const maskCanvas = document.getElementById("inpaintMask");
+    const maskCtx = maskCanvas.getContext("2d");
+    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const hasPixels = maskData.data.some((v, i) => i % 4 === 3 && v > 10);
+    if (!hasPixels) { alert("Please paint the area you want to replace first."); return; }
+
+    const btn = document.getElementById("inpaintButton");
+    const outImg = document.getElementById("inpaintOutput");
+    const outPh = document.getElementById("inpaintOutputPlaceholder");
+    const dlBtn = document.getElementById("inpaintDownloadBtn");
+
+    btn.disabled = true; btn.textContent = "Generating…";
+    outImg.style.display = "none"; outPh.style.display = "";
+    outPh.textContent = "⏳ Processing…";
+    dlBtn.style.display = "none";
+    setStatus("inpaintStatus", "Preparing image and mask…");
+
+    try {
+      setStatus("inpaintStatus", "Preparing image and mask…");
+
+      // Export original image at native resolution
+      const origCanvas = document.createElement("canvas");
+      origCanvas.width  = inpaintNaturalW;
+      origCanvas.height = inpaintNaturalH;
+      const origCtx = origCanvas.getContext("2d");
+      origCtx.drawImage(inpaintOriginalImage, 0, 0, inpaintNaturalW, inpaintNaturalH);
+
+      // Export mask at native resolution — white=paint, black=keep
+      const fullMaskCanvas = document.createElement("canvas");
+      fullMaskCanvas.width  = inpaintNaturalW;
+      fullMaskCanvas.height = inpaintNaturalH;
+      const fmCtx = fullMaskCanvas.getContext("2d");
+
+      // Fill black background first
+      fmCtx.fillStyle = "black";
+      fmCtx.fillRect(0, 0, inpaintNaturalW, inpaintNaturalH);
+
+      // Scale the display mask up to native resolution
+      fmCtx.drawImage(maskCanvas, 0, 0, inpaintNaturalW, inpaintNaturalH);
+
+      // Threshold — detect red brush strokes and make them pure white
+      const fmData = fmCtx.getImageData(0, 0, inpaintNaturalW, inpaintNaturalH);
+      for (let i = 0; i < fmData.data.length; i += 4) {
+        const r = fmData.data[i];
+        const g = fmData.data[i+1];
+        const b = fmData.data[i+2];
+        const a = fmData.data[i+3];
+        // Detect red brush strokes (r>100, g<100) OR any alpha>10
+        const isPainted = (a > 10 && r > 80) || a > 50;
+        const val = isPainted ? 255 : 0;
+        fmData.data[i]   = val;
+        fmData.data[i+1] = val;
+        fmData.data[i+2] = val;
+        fmData.data[i+3] = 255;
+      }
+      fmCtx.putImageData(fmData, 0, 0);
+
+      // Debug — check mask has painted pixels
+      const checkData = fmCtx.getImageData(0, 0, inpaintNaturalW, inpaintNaturalH);
+      let whitePixelCount = 0;
+      for (let i = 0; i < checkData.data.length; i += 4) {
+        if (checkData.data[i] > 200) whitePixelCount++;
+      }
+      console.log("White mask pixels:", whitePixelCount);
+      console.log("Image size:", inpaintNaturalW, "x", inpaintNaturalH);
+
+      if (whitePixelCount < 100) {
+        alert("Mask appears empty — please paint the area to replace first!");
+        btn.disabled = false;
+        btn.textContent = "🖼️ Generate Inpainting";
+        return;
+      }
+
+      // Convert canvases to blobs
+      const imgBlob  = await new Promise(res => origCanvas.toBlob(res, "image/png"));
+      const maskBlob = await new Promise(res => fullMaskCanvas.toBlob(res, "image/png"));
+
+      console.log("Image blob size:", imgBlob.size, "bytes");
+      console.log("Mask blob size:", maskBlob.size, "bytes");
+
+      const form = new FormData();
+      form.append("image",      imgBlob,  "image.png");
+      form.append("mask",       maskBlob, "mask.png");
+      form.append("prompt",     prompt);
+      form.append("neg_prompt", negPrompt || "blurry, low quality, distorted, watermark");
+      form.append("guidance_scale", cfg.toFixed(1));
+      form.append("num_steps",      steps);
+      form.append("mask_blur",      blur);
+
+      setStatus("inpaintStatus", "Running LaMa inpainting…");
+
+      const res = await fetch(BASE_URL_INPAINT + "/api/inpaint", {
+        method: "POST",
+        body: form
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Server error ${res.status}: ${err}`);
+      }
+
+      const blob = await res.blob();
+      outImg.src = URL.createObjectURL(blob);
+      outImg.style.display = "";
+      outPh.style.display  = "none";
+      dlBtn.style.display  = "inline-block";
+      setStatus("inpaintStatus", "✅ Done!", false);
+
+    } catch (e) {
+      console.error(e);
+      outPh.textContent = "❌ Error: " + e.message;
+      setStatus("inpaintStatus", "Failed", false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "🖼️ Generate Inpainting";
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════
+     INPAINTING MODES — Object Removal / BG Replace / Custom
+     ══════════════════════════════════════════════ */
+  let currentInpaintMode = "remove";
+
+  const PRESET_PROMPTS = {
+    // Object removal presets
+    person:    { p: "seamless background fill, natural texture, no people, photorealistic, 8k",
+                 n: "person, human, body, face, blurry, artifacts" },
+    object:    { p: "clean seamless background, natural fill, photorealistic",
+                 n: "object, item, blurry, artifacts, distorted" },
+    text:      { p: "clean surface, seamless fill, no text, no writing, photorealistic",
+                 n: "text, letters, words, writing, watermark, blurry" },
+    watermark: { p: "clean surface, seamless fill, no watermark, no text, photorealistic",
+                 n: "watermark, text, logo, blurry, artifacts" },
+    car:       { p: "clean road, seamless background fill, natural scene, photorealistic",
+                 n: "car, vehicle, automobile, blurry, artifacts" },
+    wire:      { p: "clean sky, seamless fill, no wires, natural background, photorealistic",
+                 n: "wire, cable, power line, blurry, artifacts" },
+    // Background presets
+    beach:     { p: "beautiful tropical beach background, golden sand, clear blue ocean, palm trees, sunny day, photorealistic, 8k",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+    forest:    { p: "lush green forest background, tall trees, sunlight through leaves, nature, photorealistic, 8k",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+    city:      { p: "modern city skyline at night, neon lights, bokeh, urban, cinematic, photorealistic, 8k",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+    studio:    { p: "professional photography studio background, soft gradient, clean, neutral gray, bokeh",
+                 n: "blurry, low quality, distorted, distracting elements" },
+    mountains: { p: "majestic mountain range background, snow peaks, clear blue sky, dramatic landscape, photorealistic, 8k",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+    space:     { p: "outer space background, stars, nebula, galaxy, cosmic, deep space, photorealistic",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+    office:    { p: "modern office background, glass windows, city view, professional, bokeh, photorealistic",
+                 n: "blurry, low quality, distorted, messy, cartoon" },
+    sunset:    { p: "beautiful sunset background, orange and pink sky, golden hour, dramatic clouds, photorealistic, 8k",
+                 n: "blurry, low quality, distorted, fake, cartoon" },
+  };
+
+  const MODE_HINTS = {
+    remove: "Paint over the object/person to remove. LaMa fills it seamlessly with surrounding background.",
+    bg:     "Paint the entire background area (keep subject unpainted). Choose a preset or describe your background.",
+    custom: "Paint any region and describe exactly what you want generated there.",
+  };
+
+  const MODE_BTN_LABELS = {
+    remove: "&#x1F5D1; Remove Object",
+    bg:     "&#x1F304; Replace Background",
+    custom: "&#x270F; Generate Fill",
+  };
+
+  function setInpaintMode(mode) {
+    currentInpaintMode = mode;
+
+    // Update tabs
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.remove("active"));
+    document.getElementById("tab-" + mode).classList.add("active");
+
+    // Show/hide panels
+    document.getElementById("mode-remove").style.display  = mode === "remove"  ? "" : "none";
+    document.getElementById("mode-bg").style.display      = mode === "bg"      ? "" : "none";
+    document.getElementById("mode-custom").style.display  = mode === "custom"  ? "" : "none";
+
+    // Update hint
+    document.getElementById("modeHintText").textContent = MODE_HINTS[mode];
+
+    // Update button label
+    document.getElementById("inpaintButton").innerHTML = MODE_BTN_LABELS[mode];
+
+    // Clear active preset highlight
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active-preset"));
+  }
+
+  function applyPreset(key) {
+    const preset = PRESET_PROMPTS[key];
+    if (!preset) return;
+
+    // Set the right prompt field based on mode
+    if (currentInpaintMode === "remove") {
+      document.getElementById("inpaintPrompt").value = preset.p;
+    } else if (currentInpaintMode === "bg") {
+      document.getElementById("inpaintPromptBg").value = preset.p;
+    }
+    document.getElementById("inpaintNegPrompt").value = preset.n;
+
+    // Highlight active preset button
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active-preset"));
+    event.target.classList.add("active-preset");
+  }
+
+  function getActiveInpaintPrompt() {
+    if (currentInpaintMode === "remove")  return document.getElementById("inpaintPrompt").value.trim();
+    if (currentInpaintMode === "bg")      return document.getElementById("inpaintPromptBg").value.trim();
+    if (currentInpaintMode === "custom")  return document.getElementById("inpaintPromptCustom").value.trim();
+    return "";
+  }
+
+  </script>
+</body>
+</html>

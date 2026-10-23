@@ -133,6 +133,7 @@ Select a tool, provide its prompt and/or image, adjust available settings, and s
   
 
 **Team and My Role**
+
 **Project title**: Generative Visual Content and Editing Suite (EasyGEN)
 
 **Project type:** Team project (4 students)

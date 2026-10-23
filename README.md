@@ -130,7 +130,7 @@ Select a tool, provide its prompt and/or image, adjust available settings, and s
 - Uploaded images are sent to the selected backend. Use only images you have permission to process; do not upload sensitive/private content to public tunnels.
 - Review the licenses and use restrictions for each pretrained model and dependency before redistribution or commercial use. Model weights may have separate terms from this repository.
 - This is a prototype, not a hardened production service. Add authentication, rate limiting, input/file validation, resource quotas, and restrictive CORS before deployment
-- 
+  
 
 **Team and My Role**
 **Project title**: Generative Visual Content and Editing Suite (EasyGEN)

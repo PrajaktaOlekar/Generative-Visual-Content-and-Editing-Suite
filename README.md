@@ -149,3 +149,9 @@ Select a tool, provide its prompt and/or image, adjust available settings, and s
 ## License
 
 No project-level `LICENSE` file is included. Confirm the team's intended license and add its text before redistribution. Also check the individual model licenses and dependency terms.
+
+## Project Report
+
+You can access the complete project report here:
+
+https://drive.google.com/file/d/1-oyevgX6AKAJ7KiRqANK3Qq7zGwQSJAs/view?usp=drivesdk
